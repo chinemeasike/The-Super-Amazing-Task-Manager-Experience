@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager</title>
+</head>
+<body>
+  <style>
+    body {
+      font-family: GoodDog, GoodDog;
+      padding: 20px;
+      text-align: center;
+      background-color: rgb(0, 119, 255);
+    }
+
+    form, table {
+      margin-bottom: 25px;
+      border: 5px solid #ffffff;
+      width: 58%;
+      margin: 0 auto;
+    }
+
+    table {
+      width: 60%;
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+
+    th, td {
+      border: 5px solid #ffffff;
+      padding: 8px;
+      text-align: center;
+    }
+
+    tr:hover {
+      background-color: #4ba8ff;
+    }
+
+    h1 {
+      color: rgb(255, 255, 255);
+      font-size: 60px;
+    }
+  </style>
+
+  <h1>The Super Amazing Task Manager Experience</h1>
+
+  <form id="taskForm">
+    <input type="text" id="title" placeholder="Task Title" required />
+    <select id="category">
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="Urgent">Urgent</option>
+    </select>
+    <input type="date" id="dueDate" required />
+    <select id="status">
+      <option value="Pending">Pending</option>
+      <option value="Done">Done</option>
+    </select>
+    <button type="submit">Add Task</button>
+  </form>
+
+<h2>Ask the LLM</h2>
+<input id="llmPrompt" type="text" placeholder="Ask the AI..." />
+<button id="llmAsk">Ask</button>
+<p id="llmResponse"></p>
+
+  <div>
+    <label>Filter Category:</label>
+    <select id="filterCategory">
+      <option value="All">All</option>
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="Urgent">Urgent</option>
+    </select>
+
+    <label>Filter Status:</label>
+    <select id="filterStatus">
+      <option value="All">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Done">Done</option>
+    </select>
+  </div>
+
+  <table id="taskTable">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.getElementById('llmAsk').addEventListener('click', async () => {
+  const prompt = document.getElementById('llmPrompt').value.trim();
+  const llmResponse = document.getElementById('llmResponse');
+
+  if (!prompt) {
+    llmResponse.textContent = 'Please enter a prompt.';
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await response.json();
+    llmResponse.textContent = data.response || 'No response received.';
+  } catch (err) {
+    llmResponse.textContent = 'Error contacting LLM.';
+    console.error(err);
+  }
+});
+
+  </script>
+</body>
+</html>
